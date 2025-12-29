@@ -217,8 +217,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ deckCount, onRestart }) => {
             )}
           </div>
           
-          {/* Draw Button Area - Adjusted spacing to fit inside ~400px height */}
-          <div className="absolute -bottom-6 sm:-bottom-12 lg:-bottom-52 flex flex-col items-center z-40">
+          {/* Draw Button Area - Shifted down by ~1cm (approx 38px) more than previous version */}
+          <div className="absolute -bottom-16 sm:-bottom-24 lg:-bottom-64 flex flex-col items-center z-40">
             {!canDraw && !state.revealed && !isDealing && (
               <div className="mb-1 bg-amber-500 text-black px-1.5 py-0.5 rounded-full font-black uppercase tracking-widest shadow-lg text-[6px] sm:text-[9px] animate-bounce">
                 Flip bases
@@ -228,7 +228,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ deckCount, onRestart }) => {
             <button
               onClick={drawMiddle}
               disabled={state.revealed || isDealing || !canDraw}
-              className={`bg-red-600 border sm:border-4 lg:border-8 border-white rounded-lg lg:rounded-[2rem] px-4 py-1.5 sm:px-12 sm:py-3 lg:px-24 lg:py-8 shadow-2xl text-white font-black text-[10px] sm:text-base lg:text-5xl uppercase tracking-[0.2em] transition-all
+              className={`bg-red-600 border sm:border-[3px] lg:border-8 border-white rounded-lg lg:rounded-[2rem] px-5 py-2 sm:px-14 sm:py-4 lg:px-24 lg:py-8 shadow-2xl text-white font-black text-[12px] sm:text-lg lg:text-5xl uppercase tracking-[0.2em] transition-all
                 ${state.revealed || isDealing || !canDraw ? 'opacity-20 grayscale pointer-events-none' : 'hover:scale-110 active:scale-90 shadow-red-500/30'}
               `}
             >
@@ -259,17 +259,17 @@ const GameScreen: React.FC<GameScreenProps> = ({ deckCount, onRestart }) => {
         <span className="text-white text-base sm:text-2xl lg:text-9xl font-black tabular-nums leading-none drop-shadow-lg">{state.deck.length}</span>
       </div>
 
-      {/* Bottom Right - "Next Turn" Button - Compacted */}
+      {/* Bottom Right - "Next Turn" Button - Enlarged based on user feedback */}
       <div className="absolute bottom-1 right-1 sm:bottom-4 sm:right-4 z-50">
         <button 
           onClick={dealRound}
           disabled={!state.revealed || isDealing}
-          className={`rounded-full font-black text-[8px] sm:text-sm lg:text-2xl uppercase tracking-tighter transition-all flex flex-col items-center justify-center text-center p-1 sm:p-2 lg:p-6 leading-none border sm:border-4 lg:border-8 ${
+          className={`rounded-full font-black text-[10px] sm:text-base lg:text-2xl uppercase tracking-tighter transition-all flex flex-col items-center justify-center text-center p-1 sm:p-2 lg:p-6 leading-none border sm:border-[5px] lg:border-8 ${
             state.revealed && !isDealing 
-              ? 'bg-amber-500 text-black border-amber-100 shadow-[0_0_20px_rgba(245,158,11,0.5)] animate-flash-ring active:scale-90' 
+              ? 'bg-amber-500 text-black border-amber-100 shadow-[0_0_25px_rgba(245,158,11,0.6)] animate-flash-ring active:scale-90' 
               : 'bg-white/5 text-white/10 border-white/5 grayscale pointer-events-none'
           }`}
-          style={{ width: 'clamp(35px, 12vh, 150px)', height: 'clamp(35px, 12vh, 150px)' }}
+          style={{ width: 'clamp(65px, 18vh, 160px)', height: 'clamp(65px, 18vh, 160px)' }}
         >
           <span>Next</span>
         </button>
