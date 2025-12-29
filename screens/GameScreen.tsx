@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Card, GameState } from '../types';
-import { createDeck, evaluateResult, getFairBaseCards } from '../utils/gameLogic';
+import { createDeck, evaluateResult, getFairBaseCards, getSafeRange } from '../utils/gameLogic';
 import { audio } from '../utils/audio';
 import CardComponent from '../components/CardComponent';
 
@@ -55,8 +55,6 @@ const GameScreen: React.FC<GameScreenProps> = ({ deckCount, onRestart }) => {
 
     setTimeout(() => {
       audio.playFlip();
-      
-      // Use the new "Fair Deal" logic
       const { left, right, remainingDeck } = getFairBaseCards(deckRef.current);
 
       setState(prev => ({
@@ -124,6 +122,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ deckCount, onRestart }) => {
   };
 
   const canDraw = state.leftFlipped && state.rightFlipped;
+  const safeRanks = (state.leftCard && state.rightCard && canDraw) ? getSafeRange(state.leftCard, state.rightCard) : [];
 
   return (
     <div className={`w-full h-full relative flex flex-col items-center justify-center p-2 sm:p-4 lg:p-8 ${state.result === 'DOUBLE' ? 'animate-pulse-red' : ''}`}>
@@ -207,6 +206,15 @@ const GameScreen: React.FC<GameScreenProps> = ({ deckCount, onRestart }) => {
 
         {/* Middle Result Slot */}
         <div className="relative flex flex-col items-center">
+          {/* Safe Zone Text */}
+          {canDraw && !state.revealed && (
+            <div className="absolute -top-6 sm:-top-10 lg:-top-16 text-center w-full animate-in fade-in duration-700">
+               <p className="text-emerald-400/80 font-black text-[7px] sm:text-[10px] lg:text-xl uppercase tracking-widest whitespace-nowrap">
+                 Safe: <span className="text-white drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]">{safeRanks.join(', ')}</span>
+               </p>
+            </div>
+          )}
+
           <div className="relative w-20 h-28 sm:w-32 sm:h-44 lg:w-56 lg:h-80 flex items-center justify-center">
             {state.middleCard ? (
               <CardComponent card={state.middleCard} className="w-20 h-28 sm:w-32 sm:h-44 lg:w-56 lg:h-80 z-10" />
