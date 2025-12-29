@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Card, GameState } from '../types';
-import { createDeck, evaluateResult } from '../utils/gameLogic';
+import { createDeck, evaluateResult, getFairBaseCards } from '../utils/gameLogic';
 import { audio } from '../utils/audio';
 import CardComponent from '../components/CardComponent';
 
@@ -55,13 +55,13 @@ const GameScreen: React.FC<GameScreenProps> = ({ deckCount, onRestart }) => {
 
     setTimeout(() => {
       audio.playFlip();
-      const currentDeck = [...deckRef.current];
-      const left = currentDeck.pop()!;
-      const right = currentDeck.pop()!;
+      
+      // Use the new "Fair Deal" logic
+      const { left, right, remainingDeck } = getFairBaseCards(deckRef.current);
 
       setState(prev => ({
         ...prev,
-        deck: currentDeck,
+        deck: remainingDeck,
         leftCard: left,
         rightCard: right,
         middleCard: null,
@@ -128,7 +128,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ deckCount, onRestart }) => {
   return (
     <div className={`w-full h-full relative flex flex-col items-center justify-center p-2 sm:p-4 lg:p-8 ${state.result === 'DOUBLE' ? 'animate-pulse-red' : ''}`}>
       
-      {/* Result Message Overlay - Extremely compact for landscape phones */}
+      {/* Result Message Overlay */}
       {showResult && state.result && (
         <div className="absolute top-1 sm:top-2 left-0 right-0 text-center z-[60] animate-in fade-in slide-in-from-top-4 duration-500 pointer-events-none">
           <div className="mx-auto inline-block bg-black/90 backdrop-blur-xl py-1 sm:py-3 px-4 sm:px-12 rounded-xl border border-amber-500/50 shadow-2xl">
@@ -159,7 +159,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ deckCount, onRestart }) => {
         </div>
       </div>
 
-      {/* Top Right Controls - Sound & Restart */}
+      {/* Top Right Controls */}
       <div className="absolute top-1 right-1 sm:top-4 sm:right-4 flex flex-col items-end space-y-1 sm:space-y-2 z-30 bg-black/20 p-1 rounded-lg backdrop-blur-sm border border-white/5">
         <div className="flex space-x-1">
           <button 
@@ -187,7 +187,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ deckCount, onRestart }) => {
         </button>
       </div>
 
-      {/* Main Game Area - Significantly tighter scaling for iPhone landscape heights */}
+      {/* Main Game Area */}
       <div className="flex items-center justify-center space-x-3 sm:space-x-8 lg:space-x-16 relative max-w-5xl w-full">
         
         {/* Base Card 1 */}
@@ -217,7 +217,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ deckCount, onRestart }) => {
             )}
           </div>
           
-          {/* Draw Button Area - Shifted down by ~1cm (approx 38px) more than previous version */}
+          {/* Draw Button Area */}
           <div className="absolute -bottom-16 sm:-bottom-24 lg:-bottom-64 flex flex-col items-center z-40">
             {!canDraw && !state.revealed && !isDealing && (
               <div className="mb-1 bg-amber-500 text-black px-1.5 py-0.5 rounded-full font-black uppercase tracking-widest shadow-lg text-[6px] sm:text-[9px] animate-bounce">
@@ -259,7 +259,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ deckCount, onRestart }) => {
         <span className="text-white text-base sm:text-2xl lg:text-9xl font-black tabular-nums leading-none drop-shadow-lg">{state.deck.length}</span>
       </div>
 
-      {/* Bottom Right - "Next Turn" Button - Enlarged based on user feedback */}
+      {/* Bottom Right - Next Button */}
       <div className="absolute bottom-1 right-1 sm:bottom-4 sm:right-4 z-50">
         <button 
           onClick={dealRound}
